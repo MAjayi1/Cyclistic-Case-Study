@@ -1,0 +1,89 @@
+1. Percentage breakdown of riders 
+
+WITH TotalRides AS (
+    SELECT COUNT(member_casual) AS total_ride
+    FROM CYCDATA
+    WHERE member_casual IS NOT NULL
+)
+SELECT 
+    member_casual AS membership_type,
+    COUNT(member_casual) AS total_ride,
+    (SELECT total_ride FROM TotalRides) AS total_membership,
+    CONCAT(CAST(COUNT(member_casual) * 100.0 / (SELECT total_ride FROM TotalRides) AS DECIMAL(10, 2)), '%') AS ride_percentage
+FROM CYCDATA
+WHERE member_casual IS NOT NULL
+GROUP BY member_casual;
+
+
+2. Rides per day of the week for each membership type
+
+WITH WeekdayOrder AS (
+    SELECT '1' AS day, 'Sunday' AS day_name, 1 AS order_num
+    UNION SELECT '2', 'Monday', 2
+    UNION SELECT '3', 'Tuesday', 3
+    UNION SELECT '4', 'Wednesday', 4
+    UNION SELECT '5', 'Thursday', 5
+    UNION SELECT '6', 'Friday', 6
+    UNION SELECT '7', 'Saturday', 7
+)
+
+SELECT member_casual AS membership_type,
+       WeekdayOrder.day_name AS weekdays,
+       COUNT(day_of_week) AS rides_per_day
+FROM CYCDATA
+JOIN WeekdayOrder ON CYCDATA.day_of_week = WeekdayOrder.day
+WHERE member_casual IS NOT NULL
+GROUP BY member_casual, day_of_week, WeekdayOrder.day_name
+ORDER BY MIN(WeekdayOrder.order_num), member_casual;
+
+
+3. Total Amount of rides with each bike type.
+
+SELECT COUNT(*) as electric_bike_count
+FROM CYCDATA
+WHERE rideable_type = 'electric_bike'
+
+SELECT COUNT(*) as electric_bike_count
+FROM CYCDATA
+WHERE rideable_type = 'classic_bike'
+
+SELECT COUNT(*) as electric_bike_count
+FROM CYCDATA
+WHERE rideable_type = 'docked_bike'
+
+4. Average Ride time with each bike type
+
+SELECT 
+    CONVERT(TIME, DATEADD(SECOND, AVG(TotalSeconds), 0)) AS average_ride_length
+FROM (
+    SELECT 
+        DATEDIFF(SECOND, '00:00:00', ride_legnth) AS TotalSeconds
+    FROM CYCDATA
+	Where rideable_type = 'docked_bike'
+) AS Subquery;
+
+
+
+SELECT 
+    CONVERT(TIME, DATEADD(SECOND, AVG(TotalSeconds), 0)) AS average_ride_length
+FROM (
+    SELECT 
+        DATEDIFF(SECOND, '00:00:00', ride_legnth) AS TotalSeconds
+    FROM CYCDATA
+	Where rideable_type = 'electric_bike'
+) AS Subquery;
+
+
+
+SELECT 
+    CONVERT(TIME, DATEADD(SECOND, AVG(TotalSeconds), 0)) AS average_ride_length
+FROM (
+    SELECT 
+        DATEDIFF(SECOND, '00:00:00', ride_legnth) AS TotalSeconds
+    FROM CYCDATA
+	Where rideable_type = 'classic_bike'
+) AS Subquery;
+
+5. 
+
+
