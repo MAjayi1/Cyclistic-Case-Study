@@ -1,4 +1,4 @@
-# Cyclistic-Case-Study
+ Cyclistic-Case-Study
 
 Scenario
 You are a junior data analyst working in the marketing analyst team at Cyclistic, a bike-share company in Chicago. The director of
