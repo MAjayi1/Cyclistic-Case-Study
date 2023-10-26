@@ -1,4 +1,4 @@
-1. Percentage breakdown of riders 
+1. Percentage breakdown of riders by membership type
 
 WITH TotalRides AS (
     SELECT COUNT(member_casual) AS total_ride
